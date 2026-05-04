@@ -224,13 +224,13 @@ class SupportAgent:
                 "request_type": "invalid",
             }
 
-        # Step 2: Try Primary (NVIDIA)
+        # Step 2: Try Primary (Featherless)
         try:
-            return self._process_with_primary(ticket)
+            return self._process_with_tool_loop(ticket, self.llm.primary_chat)
         except Exception as e:
-            print(f"  [NVIDIA] Failed: {e}. Switching to Gemini fallback...")
+            print(f"  [Featherless] Failed: {e}. Switching to Gemini fallback...")
 
-        # Step 3: Try Fallback (Gemini)
+        # Step 3: Try Final Fallback (Gemini)
         try:
             return self._process_with_gemini(ticket)
         except Exception as e:
@@ -243,9 +243,9 @@ class SupportAgent:
                 "request_type": "product_issue",
             }
 
-    # ── Primary Tool-Calling Loop ────────────────────────────────────────────────
+    # ── Tool-Calling Loop ────────────────────────────────────────────────────────
 
-    def _process_with_primary(self, ticket: Dict) -> Dict:
+    def _process_with_tool_loop(self, ticket: Dict, chat_fn) -> Dict:
         company = ticket.get("Company", "None")
         issue = ticket.get("Issue", "")
         subject = ticket.get("Subject", "")
@@ -262,7 +262,7 @@ class SupportAgent:
         ]
 
         for attempt in range(MAX_TOOL_ITERATIONS):
-            response = self.llm.primary_chat(messages, tools=TOOL_SCHEMAS)
+            response = chat_fn(messages, tools=TOOL_SCHEMAS)
             msg = response.choices[0].message
 
             # Check for tool calls
@@ -302,7 +302,7 @@ class SupportAgent:
                 if raw:
                     return _validate_output(raw, ticket)
                 # LLM gave text without JSON — ask it to format
-                if iteration < MAX_TOOL_ITERATIONS - 1:
+                if attempt < MAX_TOOL_ITERATIONS - 1:
                     messages.append({"role": "assistant", "content": content})
                     messages.append({
                         "role": "user",
