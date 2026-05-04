@@ -57,7 +57,7 @@ def ensure_index():
 def print_banner():
     print("\n" + "=" * 60)
     print("  HackerRank Orchestrate — Support Triage Agent")
-    print("  Primary: NVIDIA Llama 3.3 70B")
+    print("  Primary: Featherless Qwen3 0.6B")
     print("  Fallback: Gemini 1.5 Flash")
     print("=" * 60 + "\n")
 

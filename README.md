@@ -1,6 +1,6 @@
 # HackerRank Orchestrate: AI Support Triage Agent
 
-A high-performance, RAG-enabled support agent designed to accurately triage and resolve support tickets for **HackerRank**, **Claude**, and **Visa**. This system leverages a hybrid LLM architecture powered by **NVIDIA NIM** and **Google Gemini** to provide resilient, secure, and context-aware support automation.
+A high-performance, RAG-enabled support agent designed to accurately triage and resolve support tickets for **HackerRank**, **Claude**, and **Visa**. This system leverages a hybrid LLM architecture powered by **Featherless** and **Google Gemini** to provide resilient, secure, and context-aware support automation.
 
 ---
 
@@ -8,7 +8,7 @@ A high-performance, RAG-enabled support agent designed to accurately triage and 
 
 ### 1. Prerequisites
 - Python 3.10 or higher
-- [NVIDIA NIM API Key](https://build.nvidia.com/meta/llama-3.3-70b-instruct) (Primary)
+- [Featherless API Key](https://featherless.ai) (Primary)
 - [Google Gemini API Key](https://aistudio.google.com/) (Fallback)
 
 ### 2. Installation
