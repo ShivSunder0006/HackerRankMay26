@@ -16,17 +16,17 @@ from openai import OpenAI, RateLimitError, APIError, APIConnectionError
 
 class LLMClient:
     def __init__(self):
-        nvidia_key = os.getenv("NVIDIA_API_KEY")
+        featherless_key = os.getenv("FEATHERLESS_API_KEY")
         gemini_key = os.getenv("GEMINI_API_KEY")
 
-        if not nvidia_key:
-            raise ValueError("NVIDIA_API_KEY not set. Check your .env file.")
+        if not featherless_key:
+            raise ValueError("FEATHERLESS_API_KEY not set. Check your .env file.")
 
         self.primary = OpenAI(
-            base_url="https://integrate.api.nvidia.com/v1",
-            api_key=nvidia_key
+            base_url="https://api.featherless.ai/v1",
+            api_key=featherless_key
         )
-        self.primary_model = "meta/llama-3.3-70b-instruct"
+        self.primary_model = "Qwen/Qwen3-0.6B"
 
         if gemini_key:
             genai.configure(api_key=gemini_key)
@@ -37,7 +37,7 @@ class LLMClient:
             self._gemini_enabled = False
             print("Warning: GEMINI_API_KEY not set — Gemini fallback disabled.")
 
-    # ── Primary (NVIDIA) ─────────────────────────────────────────────────────────────
+    # ── Primary (Featherless) ─────────────────────────────────────────────────────────────
 
     def primary_chat(
         self,
@@ -66,17 +66,18 @@ class LLMClient:
 
             except (RateLimitError, APIConnectionError) as e:
                 if attempt == 0:
-                    print(f"  [NVIDIA] {type(e).__name__} — retrying in 3s...")
+                    print(f"  [Featherless] {type(e).__name__} — retrying in 3s...")
                     time.sleep(3)
                     continue
                 raise  # propagate to caller → triggers Gemini fallback
 
             except APIError as e:
                 if attempt == 0 and getattr(e, "status_code", 0) >= 500:
-                    print(f"  [NVIDIA] Server error {e.status_code} — retrying in 3s...")
+                    print(f"  [Featherless] Server error {e.status_code} — retrying in 3s...")
                     time.sleep(3)
                     continue
                 raise
+
 
     # ── Gemini ───────────────────────────────────────────────────────────────
 
